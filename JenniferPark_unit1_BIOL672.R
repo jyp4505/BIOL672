@@ -18,13 +18,13 @@ mean(dataset)
 sd(dataset)
 #histogram with density line using ggplot
 ggplotdata<-data.frame(value=dataset)
-p<-ggplot(ggplotdata, aes(value))+
+myplot1<-ggplot(ggplotdata, aes(value))+
   geom_histogram(aes(y=after_stat(density)), color="purple", fill="lightpink")+
   geom_density()+
   geom_function(fun=dnorm, args=list(mean=0.5015054, sd=0.289315), color="blue")+
   labs(title="Histogram of Uniform Distribution")
 #normal curve overlay
 
-print(p)
+print(myplot1)
 
 
