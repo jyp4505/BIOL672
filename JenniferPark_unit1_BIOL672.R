@@ -10,8 +10,8 @@ library('reshape2')
 #Uniform distribution
 library(ggplot2)
 
-#generating random numbers using uniform distribution
-dataset<-runif(5000)
+#generating random numbers using normal distribution
+dataset<-rnorm(5000)
 #sample mean
 mean(dataset)
 #sample standard deviation
@@ -20,9 +20,8 @@ sd(dataset)
 ggplotdata<-data.frame(value=dataset)
 myplot1<-ggplot(ggplotdata, aes(value))+
   geom_histogram(aes(y=after_stat(density)), color="purple", fill="lightpink")+
-  geom_density()+
-  geom_function(fun=dnorm, args=list(mean=0.5015054, sd=0.289315), color="blue")+
-  labs(title="Histogram of Uniform Distribution")
+  geom_density(color="green",lwd=1)+geom_function(fun=dnorm, color="blue", lwd=1)+
+  labs(title="Histogram of Normal Distribution")
 #normal curve overlay
 
 print(myplot1)
