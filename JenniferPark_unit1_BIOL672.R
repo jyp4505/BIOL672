@@ -4,23 +4,25 @@
 #Unit 1 Assignment
 #import ggplot library
 library('ggplot2')
+library('dplyr')
+
 
 #Question 2
 #Dataset of 5000 random numbers
 #Normal distribution
 
-#generating random numbers using normal distribution
+#generating random numbers using normal distribution, classify as dataset
 dataset<-rnorm(5000)
-#sample mean
+#sample mean of dataset
 my_mean<-mean(dataset)
-#sample standard deviation
+#sample standard deviation of dataset
 my_sd<-sd(dataset)
 
-#print mean and standard deviation
+#print mean and standard deviation of dataset
 my_meansd<-data.frame(my_mean, my_sd)
 print(my_meansd)
 
-#histogram with density line using ggplot
+#histogram (pink) with density line (green) and normal curve (blue) using ggplot
 ggplotdata<-data.frame(value=dataset)
 myplot1<-ggplot(ggplotdata, aes(value))+
   geom_histogram(aes(y=after_stat(density)), color="purple", fill="lightpink")+
@@ -43,33 +45,35 @@ ggsave(file="Rplots.pdf")
 file.rename(from="Rplots.pdf",to="histo.pdf")
 
 #Question 4
-#data from R database - weight versus age of chicks on different diets
+#data from R database - weight of chicks on different feeds
 #sink data into read.table file
-datasets::ChickWeight
-write.table(ChickWeight, file='/Users/jenniferpark/Desktop/BIOL672/Assignments/Unit_1/ChickWeight_tab.txt', sep="  ")
+datasets::chickwts
+write.table(chickwts, file='/Users/jenniferpark/Desktop/BIOL672/Assignments/Unit_1/chickwts_tab.txt', quote=FALSE, sep=" \t ", row=FALSE)
 
 #use read.table function to read table from external file and shape data
-data<-read.table("/Users/jenniferpark/Desktop/BIOL672/Assignments/Unit_1/ChickWeight_tab.txt",header=TRUE)
+data<-read.table("/Users/jenniferpark/Desktop/BIOL672/Assignments/Unit_1/chickwts_tab.txt",header=TRUE)
 weight=data$weight
-Time=data$Time
-Chick=data$Chick
-Diet=data$Diet
+feed=data$feed
 
 chick.data<-data.frame(
   weight,
-  Time,
-  Chick,
-  Diet
+  feed
 )
 
+#print data
 print(chick.data)
 print(summary(chick.data))
 
 #oneway ANOVA
-weight.anova=oneway.test(weight~Chick)
-Time.anova=oneway.test(Time~Chick)
-Diet.anova=oneway.test(Diet~Chick)
-
+weight.anova=oneway.test(weight~feed)
+#print results of anova test
 print(weight.anova)
-print(Time.anova)
-print(Diet.anova)
+
+
+#plot chick.data 
+myplot2<- ggplot(chick.data, aes(fill=feed, y=weight, x=feed)) + 
+  geom_bar(position="dodge", stat="identity")+
+print(myplot2)
+
+#TRYING TO FIGURE OUT HOW TO ADD ERROR BARS TO BAR CHART
+
