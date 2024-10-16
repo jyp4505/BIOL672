@@ -50,29 +50,32 @@ ggsave(paste0(output_plot,file='histo.pdf'), plot=myplot1)
 
 
 #Question 4
-#data from R database - the effect of vitamin c on tooth growth in guinea pigs
-#Definitions: OJ=orange juice, VC= Asorbic Acid (VC), doses in mg/day
+#data from R database - weight versuse age of chicks on different diets
+#weight = weight of chicks, time = time since start, chick, diet = type of diet
 #sink data into read.table file
-datasets::ToothGrowth
-write.table(ToothGrowth, file='/Users/jenniferpark/Desktop/BIOL672/Assignments/Unit_1/gpigtooth_tab.txt', quote=FALSE, sep=" \t ", row=FALSE)
+datasets::ChickWeight
+write.table(ChickWeight, file='/Users/jenniferpark/Desktop/BIOL672/Assignments/Unit_1/chickweight_tab.txt', quote=FALSE, sep=" \t ", row=FALSE)
 
 #use read.table function to read table from external file and shape data
-data<-read.table("/Users/jenniferpark/Desktop/BIOL672/Assignments/Unit_1/gpigtooth_tab.txt",header=TRUE)
-tooth_length=data$len
-supplement=data$supp
-dose=data$dose
+data<-read.table("/Users/jenniferpark/Desktop/BIOL672/Assignments/Unit_1/chickweight_tab.txt",header=TRUE)
+weight=data$weight
+time=data$Time
+chick=data$Chick
+diet=data$Diet
 
-gpigtooth.data<-data.frame(
-  tooth_length,
-  supplement,
-  dose
+
+chickweight.data<-data.frame(
+  weight,
+  time,
+  chick,
+  diet
 )
 
 #print data
-print(gpigtooth.data)
-print(summary(gpigtooth.data))
+print(chickweight.data)
+print(summary(chickweight.data))
 
-#oneway ANOVA where tooth length is dependent variable and supplement and doses are independent variables
+#oneway ANOVA where weight is dependent variable and time are independent variables
 tooth_length_supp.anova=oneway.test(tooth_length~supplement)
 tooth_length_dose.anova=oneway.test(tooth_length~dose)
 #print results of anova test
@@ -143,11 +146,13 @@ kruskal_results <- ("Without assuming normality, using ANOVA input data, the p-v
                     Without assuming normality, using ANOVA input data...") #COME BACK TO THIS
 
 #test correlation between two or more categories (supplement and dose) using pearson and spearman methods
+#convert to categorial to numeric for supplement
+supplement_numeric <- as.numeric(as.factor(supplement))
 #first use pearson
-pearson_cor<-cor(supplement, dose, method="pearson")
+pearson_cor<-cor(supplement_numeric, dose, method="pearson")
 print(pearson_cor)
 
-spearman_cor<-cor(tooth_length, dose, method="spearman")
+spearman_cor<-cor(supplement_numeric, dose, method="spearman")
 print(spearman_cor)
 
 correlation_results <- ("The pearson correlation between the tooth growth and dosage is 0.8283415, indicating a positive correlation.
@@ -156,5 +161,7 @@ correlation_results <- ("The pearson correlation between the tooth growth and do
 #make scatter plots of the pearson and spearman
 myplot3 <- ggplot(gpigtooth.data, aes(x=dose, y=tooth_length))+geom_point()
 print(myplot3)
+
+
 
 datasets:: ChickWeight
