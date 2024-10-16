@@ -50,69 +50,74 @@ ggsave(paste0(output_plot,file='histo.pdf'), plot=myplot1)
 
 
 #Question 4
-#data from R database - weight of chicks on different feeds
+#data from R database - the effect of vitamin c on tooth growth in guinea pigs
+#Definitions: OJ=orange juice, VC= Asorbic Acid (VC), doses in mg/day
 #sink data into read.table file
-datasets::chickwts
-write.table(chickwts, file='/Users/jenniferpark/Desktop/BIOL672/Assignments/Unit_1/chickwts_tab.txt', quote=FALSE, sep=" \t ", row=FALSE)
+datasets::ToothGrowth
+write.table(ToothGrowth, file='/Users/jenniferpark/Desktop/BIOL672/Assignments/Unit_1/gpigtooth_tab.txt', quote=FALSE, sep=" \t ", row=FALSE)
 
 #use read.table function to read table from external file and shape data
-data<-read.table("/Users/jenniferpark/Desktop/BIOL672/Assignments/Unit_1/chickwts_tab.txt",header=TRUE)
-weight=data$weight
-feed=data$feed
+data<-read.table("/Users/jenniferpark/Desktop/BIOL672/Assignments/Unit_1/gpigtooth_tab.txt",header=TRUE)
+tooth_length=data$len
+supplement=data$supp
+dose=data$dose
 
-chick.data<-data.frame(
-  feed,
-  weight
+gpigtooth.data<-data.frame(
+  tooth_length,
+  supplement,
+  dose
 )
 
 #print data
-print(chick.data)
-print(summary(chick.data))
+print(gpigtooth.data)
+print(summary(gpigtooth.data))
 
-#oneway ANOVA
-weight.anova=oneway.test(weight~feed)
+#oneway ANOVA where tooth length is dependent variable and supplement and doses are independent variables
+tooth_length_supp.anova=oneway.test(tooth_length~supplement)
+tooth_length_dose.anova=oneway.test(tooth_length~dose)
 #print results of anova test
-print(weight.anova)
+print(tooth_length_supp.anova)
+print(tooth_length_dose.anova)
+anova_results <- ("For tooth length and supplement, p-value is 0.06 and is greater than 0.05, meaning there is no significant difference between the supplement on the tooth growth on the guinea pigs and the null hypothesis is true.
+                  For tooth length and dose, p-value is 2.812E-13 and is less than 0.05, meaning there is significant difference between the dosage amount on the tooth growth on the guinea pigs and the null hypothesis is rejected.")
 
-anova_results <- ("p-value is 1.177E-08 and is less than 0.05, meaning the type of feed is significantly significant on the weight of the chicks and the null hypothesis is true")
-
-#calculate the mean and standard error of the weight for each feed type
-chick.mean.se<-chick.data %>%
-  group_by(feed) %>%
-  summarize(mean_weight=mean(weight),
-            se_weight=sd(weight)/sqrt(n())
+#calculate the mean and standard error of the tooth length for each supplement and dose
+gpig.mean.se<-gpigtooth.data %>%
+  group_by(supplement,dose) %>%
+  summarize(mean_length=mean(tooth_length),
+            se_length=sd(tooth_length)/sqrt(n()),
+            .groups='drop' #drop all groupings
             )
 
-#plot chick mean weight and error bars with ggplot
-myplot2<- ggplot(chick.mean.se, aes(fill=feed, y=mean_weight, x=feed)) + 
-  geom_bar(position=position_dodge(), stat="identity") + 
-  geom_errorbar(aes(x=feed, ymin=mean_weight-se_weight, ymax=mean_weight+se_weight),width=0.4)+
-  labs(title="Mean chick weight by feed with error bars", y="Mean Weight",x="Feed")
+#plot tooth length by supplement error bars with ggplot
+myplot2<- ggplot(gpig.mean.se, aes(fill=supplement, x=interaction(supplement,dose), y=mean_length)) + 
+  geom_bar(position="dodge", stat="identity") + 
+  geom_errorbar(aes(ymin=mean_length-se_length, ymax=mean_length+se_length),
+                width=0.4)+
+  labs(title="Mean tooth length by supplement and dose with error bars", y="Mean length",x="Supplement and Dosage")+
+  scale_fill_manual(values=c("OJ"="orange", "VC"="blue"))
 print(myplot2)
 
 #Set output of plot
 output_plot <-'/Users/jenniferpark/Desktop/BIOL672/Assignments/Unit_1/'
 
-#save as chickweight_histo.pdf
-ggsave(paste0(output_plot,file='chickweight_histo.pdf'), plot=myplot2)
+#save as gpigtooth_histo.pdf
+ggsave(paste0(output_plot,file='gpigtooth_histo.pdf'), plot=myplot2)
 
 #perform pairwise t-test
 #bonferroni
-bon.pairwise.t_test=pairwise.t.test(weight, feed, p.adjust.method="bonferroni")
+#use interaction function to cover all the combinations of supplement and dose
+bon.pairwise.t_test=pairwise.t.test(tooth_length, interaction(supplement,dose), p.adjust.method="bonferroni")
 print (bon.pairwise.t_test)
 
-bonferroni_results <- ("results show that the p-value < 0.05 for the following feeds: 
-horsebean and casein; linseed and casein; meatmeal and horsebean; 
-soybean and casein; sobean and horsebean; sunflower and horsebean; 
-sunflower and linseed; and sunflower and soybean
-p-value < 0.05 indicates that the difference of the mean weight between the feeds is statistically significant and so the null hyopthesis should be rejected, which states that there is no signficant difference is expected
-for the the feeds that have a p-value > 0.05, the difference of the mean weight between the feeds is not stastically significant so the null hypothesis is true")
+bonferroni_results <- ("Results show that the p-value is greater than 0.05 for the following comparisons: VC 1 and OJ 0.5; OJ 2 and OJ 1; VC2 and OJ 1; and VC 2 and OJ 2, meaning that these comparisons are not stasticially significant to each other and therefore the null hypothesis is true.
+                       The remaining p-values are less than 0.05, indicating that for these comparisions they are stastically significant so the null hypothesis is rejected.")
 
 #Benjamini-Hochberg
-benhoch.pairwise.t_test=pairwise.t.test(weight, feed, p.adjust.method="hochberg")
+benhoch.pairwise.t_test=pairwise.t.test(tooth_length, interaction(supplement,dose), p.adjust.method="hochberg")
 print(benhoch.pairwise.t_test)
 
-benhoch_results <- ("") #COME BACK TO THIS
+benhoch_results <- ("Compared to the bonferroni pairwise t-test...") #COME BACK TO THIS
 #sink one-way ANOVA test and pairwise t-test results
 sink(file='/Users/jenniferpark/Desktop/BIOL672/Assignments/Unit_1/Q4_results.txt')
 print(weight.anova)
@@ -127,4 +132,18 @@ sink()
 
 
 #QUESTION 5
+#Apply Kruskal Wallis test to ANOVA input data to examine it without assumptions of normality
+kruskal_wallis_supp<-kruskal.test(tooth_length~supplement)
+kruskal_wallis_dose<-kruskal.test(tooth_length~dose)
+print(kruskal_wallis_supp)
+print(kruskal_wallis_dose)
+
+kruskal_results <- ("Without assuming normality, using ANOVA input data, the p-value between tooth length and the type of supplement is 0.06343, which is still greater than 0.05, so there is no significant difference between the supplement on the tooth growth on the guinea pigs and the null hypothesis is true.
+                    Without assuming normality, using ANOVA input data...") #COME BACK TO THIS
+
+#test correlation between two or more categories (supplement and dose) using pearson and spearman methods
+#first use pearson
+pearson_cor<-cor(data$supp,data$dose, method="pearson")
+print(pearson_cor)
+
 
