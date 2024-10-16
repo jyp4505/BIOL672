@@ -128,6 +128,7 @@ sink()
 sink(file='/Users/jenniferpark/Desktop/BIOL672/Assignments/Unit_1/Q4_Interpretation.txt')
 print(anova_results)
 print(bonferroni_results)
+print(benhoch.pairwise.t_test)
 sink()
 
 
@@ -143,7 +144,17 @@ kruskal_results <- ("Without assuming normality, using ANOVA input data, the p-v
 
 #test correlation between two or more categories (supplement and dose) using pearson and spearman methods
 #first use pearson
-pearson_cor<-cor(data$supp,data$dose, method="pearson")
+pearson_cor<-cor(supplement, dose, method="pearson")
 print(pearson_cor)
 
+spearman_cor<-cor(tooth_length, dose, method="spearman")
+print(spearman_cor)
 
+correlation_results <- ("The pearson correlation between the tooth growth and dosage is 0.8283415, indicating a positive correlation.
+                         The spearman rank between the tooth growth and the dosage is 0.8283415, indicating a positive monotonic association.")
+
+#make scatter plots of the pearson and spearman
+myplot3 <- ggplot(gpigtooth.data, aes(x=dose, y=tooth_length))+geom_point()
+print(myplot3)
+
+datasets:: ChickWeight
