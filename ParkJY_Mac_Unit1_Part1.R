@@ -45,6 +45,8 @@ myplot1<-ggplot(ggplotdata, aes(value))+
 #print myplot1
 print(myplot1)
 
+
+
 #QUESTION 3
 #print mean and sd to an external file
 sink(file='/Users/jenniferpark/Desktop/BIOL672/Assignments/Unit_1/desc.txt')
@@ -91,7 +93,7 @@ print(tooth_length_dose.anova)
 
 
 #interpretation
-interpretation_file <- "Q1-Q6_interpretation.md"
+interpretation_file <- "Interpretation_Part1.md"
 myinterpretation <- file(interpretation_file, open = "wt" )
 writeLines(c(
   "",
@@ -140,7 +142,7 @@ bon.pairwise.t_test=pairwise.t.test(tooth_length, interaction(supplement,dose), 
 print (bon.pairwise.t_test)
 
 #interpretation
-interpretation_file <- "Q1-Q6_interpretation.md"
+interpretation_file <- "Interpretation_Part1.md"
 myinterpretation <- file(interpretation_file, open = "a" )
 writeLines(c(
   "",
@@ -162,7 +164,26 @@ close(con=myinterpretation)
 benhoch.pairwise.t_test=pairwise.t.test(tooth_length, interaction(supplement,dose), p.adjust.method="hochberg")
 print(benhoch.pairwise.t_test)
 
-benhoch_results <- ("Compared to the bonferroni pairwise t-test...") #COME BACK TO THIS
+#interpretation
+interpretation_file <- "Interpretation_Part1.md"
+myinterpretation <- file(interpretation_file, open = "a" )
+writeLines(c(
+  "",
+  "BENJAMINI_HOCHBERG PAIRWISE T-TEST",
+  "Results show that the p-value is greater than 0.05 for the following comparisons: 
+  VC 1 and OJ 0.5; OJ 2 and OJ 1; VC2 and OJ 1; and VC 2 and OJ 2, 
+  meaning that these comparisons are not stasticially significant to each other 
+  and therefore the null hypothesis is true.
+  The remaining p-values are less than 0.05, indicating that for these 
+  comparisions they are stastically significant so the null hypothesis is rejected.",
+  "",
+  "The results between the two pairwise t-tests ares similar but it can be seen that
+  Benjamini-Hochberg test shows smaller p-values in general."
+  
+)
+, con = myinterpretation)
+
+close(con=myinterpretation)
 
 #sink one-way ANOVA test and pairwise t-test results
 sink(file='/Users/jenniferpark/Desktop/BIOL672/Assignments/Unit_1/Q4_results.txt')
@@ -181,9 +202,10 @@ print(kruskal_wallis_supp)
 print(kruskal_wallis_dose)
 
 #interpretation
-interpretation_file <- "Q1-Q6_interpretation.md"
+interpretation_file <- "Interpretation_Part1.md"
 myinterpretation <- file(interpretation_file, open = "a" )
 writeLines(c(
+  "",
   "",
   "QUESTION 5",
   "",
@@ -194,7 +216,7 @@ writeLines(c(
   between the supplement on the tooth growth on the guinea pigs and the null hypothesis is true.
   Without assuming normality, using ANOVA input data, the p-value between tooth length
   and dose amount is 1.475E-09, which is signficantly smaller than 0.05,
-  so there is significant different between the dose on the tooth growth on the guinea pig and the null hypothesis is not rejected."
+  so there is significant different between the dose on the tooth growth on the guinea pig and the null hypothesis is rejected."
 )
 , con = myinterpretation)
 
@@ -211,14 +233,14 @@ spearman_cor<-cor.test(tooth_length, dose, method="spearman")
 print(spearman_cor)
 
 #interpretation
-interpretation_file <- "Q1-Q6_interpretation.md"
+interpretation_file <- "Interpretation_Part1.md"
 myinterpretation <- file(interpretation_file, open = "a" )
 writeLines(c(
   "",
   "PEARSON AND SPEARMAN",
   "The pearson correlation coefficient between the tooth growth and dose is 0.8026913, indicating a positive correlation.
   The spearman rank coefficient between the tooth growth and the dosage is 0.8283415, indicating a positive monotonic association.
-  The p-value for both correlations are significant small, indicating the correlation between the two
+  The p-value for both correlations are significantly small, indicating the correlation between the two
   variables are signficant."
 )
 , con = myinterpretation)
@@ -239,7 +261,7 @@ one_sample.ks.test <- ks.test(tooth_length, "pnorm", toothlength_mean, toothleng
 print (one_sample.ks.test)
 
 #interpretation
-interpretation_file <- "Q1-Q6_interpretation.md"
+interpretation_file <- "Interpretation_Part1.md"
 myinterpretation <- file(interpretation_file, open = "a" )
 writeLines(c(
   "",
@@ -255,7 +277,7 @@ close(con=myinterpretation)
 
 #comparing results of parametric (ANOVA) and nonparametric tests (kruskal wallis)
 #interpretation
-interpretation_file <- "Q1-Q6_interpretation.md"
+interpretation_file <- "Interpretation_Part1.md"
 myinterpretation <- file(interpretation_file, open = "a" )
 writeLines(c(
   "",
@@ -285,9 +307,12 @@ myplot4 <- ggplot(gpigtooth.data, aes(x=dose, y=tooth_length))+
 print(myplot4)
 
 #interepretation
-interpretation_file <- "Q1-Q6_interpretation.md"
+interpretation_file <- "Interpretation_Part1.md"
 myinterpretation <- file(interpretation_file, open = "a" )
 writeLines(c(
+  "",
+  "",
+  "QUESTION 6",
   "",
   "LINEAR REGRESSION AND COMPARISON TO CORRELATIONS",
   "The r-squared value between tooth length and dose is approximately 0.64, 

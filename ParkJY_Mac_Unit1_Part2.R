@@ -21,7 +21,7 @@ raw_energy_data <- read_csv("/Users/jenniferpark/Desktop/BIOL672/Assignments/Uni
 
 #extract first 200 rows from file
 energy_data_extracted <- raw_energy_data[1:200,]
-#write table of csv file
+
 
 print(energy_data_extracted)
 
@@ -98,12 +98,14 @@ print(myplot5)
 print(myplot6)
 
 
-interpretation_file <- "Q7-Q12_interpretation.md"
+interpretation_file <- "Interpretation_Part2.md"
 myinterpretation <- file(interpretation_file, open = "wt" )
 writeLines(c(
   "",
   "",
   "QUESTION 8",
+  "",
+  "MANOVA",
   "Since the p value is 2.2E-16 and is significantly smaller than 0.05, 
   there is significant impact of the independent variable, region, 
   to the dependent variables.  Therefore, the null hypothesis can be rejected.
@@ -128,12 +130,14 @@ my.mlr <- summary(mlr.test)
 print(my.mlr)
 
 
-interpretation_file <- "Q7-Q12_interpretation.md"
+interpretation_file <- "Interpretation_Part2.md"
 myinterpretation <- file(interpretation_file, open = "a" )
 writeLines(c(
   "",
   "",
   "QUESTION 9",
+  "",
+  "MLR",
   "For household_size, the p-value is 0.779 and significantly larger than 0.05.  
   There is a positive relationship between household_size and total_energy_use,
   in that when one unit of household_size is increased, the total_energy_use increased by approximately 96.6 units.
@@ -177,9 +181,11 @@ my.mlr.NE <- summary(mlr.NE.test)
 #print results
 print(my.mlr.NE)
 
-interpretation_file <- "Q7-Q12_interpretation.md"
+interpretation_file <- "Interpretation_Part2.md"
 myinterpretation <- file(interpretation_file, open = "a" )
 writeLines(c(
+  "",
+  "MLR for NE",
   "When doing the regression focussing on the NORTHEAST (NE) region, for the most part,
   the relationships between the dependent variable (NE) and the other variables are the same
   as when the dependent variable covered all the regions.  However, the p-value for ng_use
@@ -271,11 +277,13 @@ print(petal_width.anova)
 print(petal_width_cor.anova)
 
 #interpretation
-interpretation_file <- "Q7-Q12_interpretation.md"
+interpretation_file <- "Interpretation_Part2.md"
 myinterpretation <- file(interpretation_file, open = "a" )
 writeLines(c(
   "",
+  "",
   "QUESTION 11",
+  "",
   "When comparing the original iris dataset to the corrupted datset, in this case
   missing data, there is no significant difference in the ANOVA results. The p-values
   in the corrupt dataset is still significant smaller than 0.05.  Therfore, it can be said
@@ -356,11 +364,13 @@ review_species.kw <- kruskal.test(review_pur~species_pur)
 print(review_species.kw)
 
 #interpretation
-interpretation_file <- "Q7-Q12_interpretation.md"
+interpretation_file <- "Interpretation_Part2.md"
 myinterpretation <- file(interpretation_file, open = "a" )
 writeLines(c(
   "",
+  "",
   "QUESTION 12",
+  "",
   "The high p-values from the kruskal wallis tests show that there is no significant influence
   of the categorical variables (species, color, sold) on the ordinal variables 
   (attract, likelytobuy, review).  The only one that shows some significance is
@@ -395,11 +405,13 @@ biplot(myPCA)
 print(loadings(myPCA))
 
 #interpretation
-interpretation_file <- "Q13-Q16_interpretation.md"
+interpretation_file <- "Interpretation_Part2.md"
 myinterpretation <- file(interpretation_file, open = "a" )
 writeLines(c(
   "",
+  "",
   "QUESTION 13",
+  "",
   "The reduction of the data was succsessful as shown in the scree plot, where
   the bend or elbow of the curve occurs at component 3, which indicates
   the first three components are enough to explain the data and the rest can be
@@ -437,3 +449,6 @@ mykmeans_test <- kmeans(without_cag.dataframe, 1, nstart = 1)
 mykmeans <- summary(mykmeans_test)
 print(mykmeans)
 
+
+
+#QUESTION 16
