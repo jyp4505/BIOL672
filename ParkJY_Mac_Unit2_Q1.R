@@ -1,5 +1,9 @@
-#Jennifer Park
+#JenniferPark_unit2_BIOL672.r
+
+#Operating system: MacOS Ventura 13.1
+
 #Unit 2 assignment
+
 
 #import libraries 
 library('class') #for KNN
@@ -30,16 +34,7 @@ Outcome = data$Outcome # whether person has diabetes, 1 = YES, 0 = NO
 dataframe = data.frame(Pregnancies, Glucose, BloodPressure, SkinThickness, 
                        Insulin, BMI, DiabetesPedigreeFunction, Age, Outcome)
 
-#set subframe (w/o outcome)
-subframe = data.frame(Pregnancies, Glucose, BloodPressure, SkinThickness, 
-                      Insulin, BMI, DiabetesPedigreeFunction, Age)
-print(subframe)
-
-#shuffle subframe (excluding Outcome)
-shuffled_subframe <- subframe[sample(nrow(subframe)), ]
-print(shuffled_subframe)
-
-#split subframe dataset intro training and test datasets
+#split dataset intro training and test datasets
 #Try 20% test and 80% training, where 80% data is TRUE and 20% is FALSE
 sample_data <- sample(c(TRUE, FALSE), nrow(dataframe), replace=TRUE, prob=c(0.8,0.2))
 
