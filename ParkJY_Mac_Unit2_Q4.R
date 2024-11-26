@@ -58,6 +58,7 @@ print(dim(train_data))
 print(dim(test_data))
 
 
+#RANDOM FOREST
 #perform random forest classifier
 #change outcome to factor
 dataframe$Outcome <- as.factor(dataframe$Outcome)
@@ -98,23 +99,28 @@ writeLines(c(
   "QUESTION 4",
   "",
   "RANDOM FOREST",
+  "",
   "I utilized the same dataset diabetes dataset from the previous questions (diabetes) 
   and used the random forest method to classify and determine calculate the accuracy.  
   The confusion matrix provided a classification accuracy of 74.4%, which
-  is slightly more accurate than the KNN method (e.g. 69.93%), but significantly more
-  accurate than the neural network method (e.g. 63.7%) and the radial basis KSVM method (e.g. 57.23%).",
+  is similar to the accuracies found in machine learning (e.g. naive bayes) and
+  neural network.  However, the classification accuracy for random forest is significantly greater
+  than the svm methods.",
   "",
   "CONFUSION MATRIX",
-  "1. Q4_confusion_matrix_randomforest.txt",
   "",
-  
-  ""
+  "1. Q4_confusion_matrix_randomforest.txt"
+
   
 )
 , con = myinterpretation)
 
 close(con=myinterpretation)
 
+
+#########################################################################################################
+
+#ADA BOOSTING
 #now try adaptive boosting (adaboost) method
 mytest_adaboost <-  ada(Outcome~Pregnancies + Glucose + BloodPressure + SkinThickness
                         + Insulin + BMI + DiabetesPedigreeFunction + Age, train_data) 
@@ -141,21 +147,22 @@ myinterpretation <- file(interpretation_file, open = "a" )
 writeLines(c(
   "",
   "ADABOOST",
+  "",
   "I utilized the same dataset diabetes dataset from the previous questions (diabetes) 
   and used the adaboost method to classify and determine calculate the accuracy.  
   The confusion matrix provided a classification accuracy of 71.4%, which
-  is slightly less accurate than random forest method (e.g. 74.4%), 
-  slightly more accurate than the KNN method (e.g. 67.2%), but significantly more
-  accurate than the neural network method (e.g. 63.7%) and the radial basis KSVM method (e.g. 57.2%).",
+  is similar to the accuracies found in machine learning (e.g. naive bayes),
+  neural network, and random forest.  However, the classification accuracy for 
+  random forest is significantly greater than the svm methods.",
   "",
-  "Out of all the methods used, the random forest method and adaboost method seem to produce
-  the best classfication accuracy.",
+  "Out of all the methods used, the neural network method provided the highest
+  classification accuracy for the diabetes dataset, with an outcome of whether or not
+  someone has diabetes.",
   "",
   "CONFUSION MATRIX",
-  "1. Q4_confusion_matrix_adaboost.txt",
   "",
+  "1. Q4_confusion_matrix_adaboost.txt",
   
-  ""
   
 )
 , con = myinterpretation)

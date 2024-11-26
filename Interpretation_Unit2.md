@@ -1,106 +1,157 @@
 
 QUESTION 1
 
-I utilized KNN method to classify a new dataset using the pre-classified diabetes dataset.
-  I shuffled the dataset, specifically the subframe which did not include the class (e.g. outcome),
-  and split the dataset into 20% test data and 80% training data. Using the KNN function and the confusion
-  matrix, I was able to find the the incorrect and correct assignments, along with how accurate the
-  model was.  According the the matrix, the model correctly assigned 91 people as 0 or 
-  not having diabetes (e.g. True negative), the model correctly assigned 28 people as 1
-  or having diabetes (e.g. True positive), the model mistakenly assigned 31 people as 0 or not
-  having diabetes (e.g. False negative), and the model mistakenly assigned 27 people as 1 or 
-  having diabetes.  Therefore, the accuracy of the model turns out to be approximately 67.2%,
-  showing that the model is somewhat accurate, but not that accurate in correctly classifying.
+KNN
+
+Using the KNN method on the diabetes dataset, the classfication accuracy, or the
+  percentage of correct assignments was approximately 65%. The plots for the test data 
+  (pregnancies vs. glucose, glucose vs. bmi, and age vs. insulin) show that the outcome 
+  from the dataset and the predicted outcomes in KNN shave similar colors of samples
+  but one can clearly see the colors of some samples are not the same between
+  the two graphs, indicating some inaccuracy in the classification.
 
 CONFUSION MATRIX
-1. Q1_confusion_matrix.txt
+
+Q1_confusion_matrix_KNN.txt
 
 PLOTS
-1. Q1_Scatter_Plots_Glucose_vs._Pregnancies.pdf
-2. Q1_Scatter_Plots_Glucose_vs._BMI.pdf
-3. Q1_Scatter_Plots_Insulin_vs._Age.pdf
 
-The plots for the test data (pregnancies vs. glucose, glucose vs. bmi, and age vs. insulin) 
-  show that the outcome from the dataset and the predicted outcomes in KNN showed some similarities
-  in terms of color but one can clearly see the colors of some samples are not the same between
+Q1_knn_scatter_plots.pdf
+
+NAIVE BAYES
+
+Using the naive Bayes method on the diabetes dataset, the classfication accuracy, or the
+  percentage of correct assignments was approximately 72.6%. The accuracy is slightly higher
+  than the accuracy seen in KNN.  The plots for the test data 
+  (pregnancies vs. glucose, glucose vs. bmi, and age vs. insulin) show that the outcome 
+  from the dataset and the predicted outcomes in naive Bayes have more the same colors of samples
+  than KNN but one can still see the colors of some samples are not the same between
   the two graphs, indicating some inaccuracy in the classification.
+
+CONFUSION MATRIX
+
+Q1_confusion_matrix_NBE.txt
+
+PLOTS
+
+Q1_nbe_scatter_plots.pdf
+
+LDA
+
+Using the LDA method on the diabetes dataset, the classfication accuracy, or the
+  percentage of correct assignments was approximately 79%. The accuracy is higher
+  than the accuracy seen in both KNN and naive Bayes.  Similar to the other methods, 
+  the plots for the test data (pregnancies vs. glucose, glucose vs. bmi, and age vs. insulin) 
+  show that the outcome from the dataset and the predicted outcomes in naive Bayes 
+  have very similar colors of samples but one can still see the colors of some samples are 
+  not the same between the two graphs, indicating some minor inaccuracy in the classification.
+
+CONFUSION MATRIX
+
+Q1_confusion_matrix_LDF.txt
+
+PLOTS
+
+Q1_lda_scatter_plots.pdf
+
+QDA
+
+Using the QDA method on the diabetes dataset, the classfication accuracy, or the
+  percentage of correct assignments was approximately 50%. The accuracy is signifcantly
+  lower than the accuracies found in the other methods.  The plots for the test data 
+  (pregnancies vs. glucose, glucose vs. bmi, and age vs. insulin) 
+  show that the outcome from the dataset and the predicted outcomes in naive Bayes 
+  have some similar colors of samples but one can clearly still see the colors of many samples are 
+  not the same between the two graphs, indicating some major inaccuracy in the classification.
+
+CONFUSION MATRIX
+
+Q1_confusion_matrix_QDA.txt
+
+PLOTS
+
+Q1_qda_scatter_plots.pdf
+
 
 
 QUESTION 2
 
-I utilized the same dataset as question 1 (diabetes) and used the kernel support vector
-  machine (KSVM) method and compared the classification accuracy between the 
-  different kernal functions (e.g. linear, polynomial, and radial basis function).
+I utilized the same dataset as question 1 (diabetes) and used the support vector machine (SVM) 
+  method (e.g. e1071) and the kernal SVM (KSVM) method and compared the classification accuracy between the 
+  different kernal functions (e.g. linear, polynomial, and radial basis function) and methods.
 
 LINEAR KERNEL FUNCTION
-Using the linear function, the classification accuracy came out to be approximately 52.3%, 
-  which is significantly less than the accuracy that was calculated in Q1 using
-  the KNN method (e.g. 67.2%).  Similar to KNN, the plots for the test data 
-  (pregnancies vs. glucose, glucose vs. bmi, and age vs. insulin) show that the outcome 
-  from the dataset and the predicted outcomes in the KSVM using linear function showed some similarities
-  in terms of color but one can clearly see the colors of some samples are not the same between
-  the two graphs, indicating some inaccuracy in the classification.  The difference in colors
-  are slightly more noticeable than when using KNN.
+
+Using the linear function, the classification accuracy for svm and ksvm came out to be approximately 
+  63% and 52.6%, respectively.  The plots show that when comparing the test data outcome to the
+  predicted outcome using svm and ksvm, one can see that the colors in the svm plot match up better to the
+  test data plat than the ksvm, therefore showing that has a higher classification accuracy.
 
 CONFUSION MATRIX
-1.Q2_confusion_matrix_linear.txt
+
+1. Q2_confusion_matrix_svm_linear.txt
+2. Q2_confusion_matrix_ksvm_linear.txt
 
 PLOTS FOR LINEAR
-1. Q2_Scatter_Plots_BMI_vs._Glucose_Linear.pdf
-2. Q2_Scatter_Plots_Glucose_vs._Pregnancies_Linear.pdf
-3. Q2_Scatter_Plots_Insulin_vs._Age_Linear.pdf
+
+Q2_svm_ksvm_linear_scatter_plots.pdf
 
 POLYNOMIAL KERNEL FUNCTION
-Using the polynomial function, the classification accuracy came out to be approximately 46%, 
-  which is significantly less than the accuracy that was calculated in Q1 using
-  the KNN method (e.g. 67.2%) and less than the accuracy using the linear function (e.g. 52.3%).
-  The plots also show some similarities of the colors between the outcome from the dataset
-  and the predicted outcomes (polynomial KSVM) but similar to the linear function, one can see
-  the noticeable difference in colors between the two graphs, indicating several misclassifications.
+
+Using the polynomial function, the classification accuracy for svm and ksvm came out to be approximately 
+  68.6% and 52.9%, respectively.  Similar to the linear function, the plots show that when comparing the test data outcome to the
+  predicted outcome using svm and ksvm, one can see that the colors in the svm plot match up better to the
+  test data plat than the ksvm, therefore showing that has a higher classification accuracy.
 
 CONFUSION MATRIX
-1.Q2_confusion_matrix_polynomial.txt
+
+1. Q2_confusion_matrix_svm_polynomial.txt
+2. Q2_confusion_matrix_ksvm_polynomial.txt
 
 PLOTS FOR POLYNOMIAL
-1. Q2_Scatter_Plots_BMI_vs._Glucose_Poly.pdf
-2. Q2_Scatter_Plots_Glucose_vs._Pregnancies_Poly.pdf
-3. Q2_Scatter_Plots_Insulin_vs._Age_Poly.pdf
+
+Q2_svm_ksvm_polynomial_scatter_plots.pdf
 
 RADIAL BASIS KERNEL FUNCTION
-Using the radial basis function, the classification accuracy came out to be approximately 57.2%, 
-  which is still less than the accuracy that was calculated in Q1 using
-  the KNN method (e.g. 67.2%) but higher than the accuracy using the linear function (e.g. 52.3%)
-  and the polynymoial function (46%).
-  The plots also show some similarities of the colors between the outcome from the dataset
-  and the predicted outcomes (polynomial KSVM) but similar to the linear function and the
-  polynomial function, one can see the noticeable difference in colors between the two graphs, 
-  indicating several misclassifications.
+
+Using the radial basis function, the classification accuracy for svm and ksvm came out to be approximately 
+  66.4% and 54.5%, respectively.  Similar to the linear and polynomial function, the plots show that when comparing the test data outcome to the
+  predicted outcome using svm and ksvm, one can see that the colors in the svm plot match up better to the
+  test data plat than the ksvm, therefore showing that has a higher classification accuracy.
 
 CONFUSION MATRIX
-1.Q2_confusion_matrix_radial.txt
+
+1. Q2_confusion_matrix_svm_radial.txt
+2. Q2_confusion_matrix_ksvm_radial.txt
 
 PLOTS FOR RADIAL BASIS
-1. Q2_Scatter_Plots_BMI_vs._Glucose_Radial.pdf
-2. Q2_Scatter_Plots_Glucose_vs._Pregnancies_Radial.pdf
-3. Q2_Scatter_Plots_Insulin_vs._Age_Radial.pdf
 
-From the results, it seems that out of the three different kernel functions, the radial basis
-  kernel function produced the higest classification accuracy (e.g. 57.2%). However, it is still
-  less than the accuracy seen using the KNN method (e.g. 67.2%), suggesting the simpler
-  method, KNN, was better in terms of classification accuracy.
+Q2_svm_ksvm_radial_scatter_plots.pdf
+
+From the results, it seems that using svm function from the e1071 library had better accuracy
+  than when using the ksvm function from the kernel library.  Even though svm has better accuracy,
+  overall, the svm methods do not provide a better classification accuracy than the simple machine
+  learning methods, like naive Bayes and LDA.
 
 
 QUESTION 3
 
+NEURAL NETWORK
+
 I utilized the same dataset as question 1 and 2 (diabetes) and used the neural network
-   to calculate the accuracy.  The neuralnet provided a classification accuracy of 63.7%, which
-  is more accurate than when using the radial basis KSVM in question 2 (e.g. 57.2%) but still 
-  not as accurate as the KNN method (e.g. 67.2%).
+   to calculate the accuracy.  The neuralnet provided a classification accuracy of 
+   approximately 79.7%, which is significantly more accurate than when using the different 
+   kernel functions in both svm and ksvm in question 2. Therefore, the neuralnetwork
+   seems to have worked better than the support vector machine methods in terms of
+   correclty classifying the outcomes.  In terms of comparing to simple machine learning, the accuracy
+  is similar to naive bayes and LDA.
 
 CONFUSION MATRIX
-1. Q3_confusion_matrix_neuralnet.txt
 
-NEURAL NETWORK
+Q3_confusion_matrix_neuralnet.txt
+
+PLOT
+
 Q3_neuralnet.pdf
 
 
@@ -108,29 +159,31 @@ Q3_neuralnet.pdf
 QUESTION 4
 
 RANDOM FOREST
+
 I utilized the same dataset diabetes dataset from the previous questions (diabetes) 
   and used the random forest method to classify and determine calculate the accuracy.  
   The confusion matrix provided a classification accuracy of 74.4%, which
-  is slightly more accurate than the KNN method (e.g. 69.93%), but significantly more
-  accurate than the neural network method (e.g. 63.7%) and the radial basis KSVM method (e.g. 57.23%).
+  is similar to the accuracies found in machine learning (e.g. naive bayes) and
+  neural network.  However, the classification accuracy for random forest is significantly greater
+  than the svm methods.
 
 CONFUSION MATRIX
+
 1. Q4_confusion_matrix_randomforest.txt
 
-
-
 ADABOOST
+
 I utilized the same dataset diabetes dataset from the previous questions (diabetes) 
   and used the adaboost method to classify and determine calculate the accuracy.  
   The confusion matrix provided a classification accuracy of 71.4%, which
-  is slightly less accurate than random forest method (e.g. 74.4%), 
-  slightly more accurate than the KNN method (e.g. 67.2%), but significantly more
-  accurate than the neural network method (e.g. 63.7%) and the radial basis KSVM method (e.g. 57.2%).
+  is similar to the accuracies found in machine learning (e.g. naive bayes),
+  neural network, and random forest.  However, the classification accuracy for 
+  random forest is significantly greater than the svm methods.
 
-Out of all the methods used, the random forest method and adaboost method seem to produce
-  the best classfication accuracy.
+Out of all the methods used, the neural network method provided the highest
+  classification accuracy for the diabetes dataset, with an outcome of whether or not
+  someone has diabetes.
 
 CONFUSION MATRIX
+
 1. Q4_confusion_matrix_adaboost.txt
-
-

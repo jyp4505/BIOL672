@@ -56,8 +56,6 @@ print(test_data)
 print(dim(train_data))
 print(dim(test_data))
 
-#make sure length of class vector matches up with test data
-print(length(myoutcome))
 
 #perform neural network, 3 hidden layers
 mytest <- neuralnet(Outcome~Pregnancies + Glucose + BloodPressure + SkinThickness
@@ -65,16 +63,21 @@ mytest <- neuralnet(Outcome~Pregnancies + Glucose + BloodPressure + SkinThicknes
                     test_data, hidden = 3, linear.output = FALSE)
 print(mytest)
 print(plot(mytest))
-mypred <- predict(mytest, test_data, rep = 1, all.units = FALSE)
+
+#remove outcome column from training and test data for predict()
+train_data_no_outcome <- train_data[,-which(colnames(train_data) == "Outcome")]
+test_data_no_outcome <- test_data[,-which(colnames(test_data) == "Outcome")]
+
+mypred <- predict(mytest, test_data_no_outcome, rep = 1, all.units = FALSE)
+
 print(mypred)
 
 
 #confusion matrix to evaluate scores of neural network
-print(max.col(mypred))
-Outcome_factor <- as.factor(data$Outcome[!sample_data])
-print(as.integer(Outcome_factor))
-Outcome_integer <- as.integer(Outcome_factor)
-mymatrix <- confusionMatrix(as.factor(max.col(mypred)), as.factor(Outcome_integer))
+print(round(mypred))
+Outcome_factor <- as.factor(test_data$Outcome)
+print(Outcome_factor)
+mymatrix <- confusionMatrix(as.factor(round(mypred)), Outcome_factor)
 print(mymatrix)
 
 
@@ -93,15 +96,22 @@ writeLines(c(
   "",
   "QUESTION 3",
   "",
+  "NEURAL NETWORK",
+  "",
   "I utilized the same dataset as question 1 and 2 (diabetes) and used the neural network
-   to calculate the accuracy.  The neuralnet provided a classification accuracy of 63.7%, which
-  is more accurate than when using the radial basis KSVM in question 2 (e.g. 57.2%) but still 
-  not as accurate as the KNN method (e.g. 67.2%).",
+   to calculate the accuracy.  The neuralnet provided a classification accuracy of 
+   approximately 79.7%, which is significantly more accurate than when using the different 
+   kernel functions in both svm and ksvm in question 2. Therefore, the neuralnetwork
+   seems to have worked better than the support vector machine methods in terms of
+   correclty classifying the outcomes.  In terms of comparing to simple machine learning, the accuracy
+  is similar to naive bayes and LDA.",
   "",
   "CONFUSION MATRIX",
-  "1. Q3_confusion_matrix_neuralnet.txt",
   "",
-  "NEURAL NETWORK",
+  "Q3_confusion_matrix_neuralnet.txt",
+  "",
+  "PLOT",
+  "",
   "Q3_neuralnet.pdf",
   ""
   
