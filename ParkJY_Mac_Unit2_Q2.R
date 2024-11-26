@@ -7,7 +7,7 @@ library('kernlab') #for kernal
 library('ggplot2') #for plotting
 library('dplyr') # for resampling
 library('caret') # for confusion matrix
-library ('griad') #for putting several plots on grid
+library ('grid') #for putting several plots on grid
 #QUESTION 2
 
 #import dataset from kaggle
@@ -33,19 +33,19 @@ subframe = data.frame(Pregnancies, Glucose, BloodPressure, SkinThickness,
                       Insulin, BMI, DiabetesPedigreeFunction, Age)
 print(subframe)
 
-#shuffle subframe (excluding Outcome)
-shuffled_subframe <- subframe[sample(nrow(subframe)), ]
-print(shuffled_subframe)
+#shuffle dataframe (including Outcome)
+shuffled_dataframe <- dataframe[sample(nrow(dataframe)), ]
+print(shuffled_dataframe)
 
 #split subframe dataset intro training and test datasets
 #Try 20% test and 80% training, where 80% data is TRUE and 20% is FALSE
-sample_data <- sample(c(TRUE, FALSE), nrow(subframe), replace=TRUE, prob=c(0.8,0.2))
+sample_data <- sample(c(TRUE, FALSE), nrow(dataframe), replace=TRUE, prob=c(0.8,0.2))
 
 #TRUE values for training data
-train_data <- subframe[sample_data, ]
+train_data <- dataframe[sample_data, ]
 
 #FALSE values for test data
-test_data <- subframe[!sample_data, ]
+test_data <- dataframe[!sample_data, ]
 
 #print train and test data
 print(train_data)
@@ -55,88 +55,230 @@ print(test_data)
 print(dim(train_data))
 print(dim(test_data))
 
-#class vector for training data (Outcome)
-myoutcome = data$Outcome[sample_data]
-print(myoutcome)
+#SVM
+#perform support vector machines (SVM) using e1071
 
-#make sure length of class vector matches up with test data
-print(length(myoutcome))
+#mytest_svm <-  svm(Outcome~Pregnancies + Glucose + BloodPressure + SkinThickness + Insulin + BMI + DiabetesPedigreeFunction + Age, train_data, probability = TRUE, type = "C-classification", kernel = "linear", cost = 5)
+mytest_svm <-  svm(Outcome~Pregnancies + Glucose + BloodPressure + SkinThickness + Insulin + BMI + DiabetesPedigreeFunction + Age, train_data, probability =TRUE, type = "C-classification", kernel = "polynomial", cost = 5, degree = 2, gamma = 4)
+#mytest_svm <-  svm(Outcome~Pregnancies + Glucose + BloodPressure + SkinThickness + Insulin + BMI + DiabetesPedigreeFunction + Age, train_data, probability =TRUE, type = "C-classification", kernel = "radial",  cost = 5, gamma = 4)
 
-#perform kernel support vector machine (KSVM)
-#first do kernal function tuning
-#mytest <- ksvm(as.matrix(train_data), myoutcome, kernel = 'vanilladot') #linear kernel function
-#mytest <- ksvm(as.matrix(train_data), myoutcome, kernel = 'polydot') #polynomial kernel function
-mytest <- ksvm(as.matrix(train_data), myoutcome, kernel = 'rbfdot') #radial base kernel function
-mypred <- predict(mytest, test_data, type='response')
+#remove outcome column from training and test data for predict()
+train_data_no_outcome <- train_data[,-which(colnames(train_data) == "Outcome")]
+test_data_no_outcome <- test_data[,-which(colnames(test_data) == "Outcome")]
 
-#was getting -1 level when printing "mypred" so using ifelse statement to have all values greater than 0, 1, and anything below it 0
-mypred <- ifelse(mypred>0, 1, 0)
+mypred_svm <- predict(mytest_svm, test_data_no_outcome, probability = FALSE, decision.values = TRUE)
 
-#print summary of ksvm
-mySVM <- summary(mypred)
+#print summary
+mySVM <- summary(mytest_svm)
 print(mySVM)
 
-#confusion matrix to evaluate scores of Kernel SVM model
-print(as.factor(mypred))
-print(as.factor(data$Outcome[!sample_data]))
+#confusion matrix to evaluate scores of SVM model
+print(as.factor(mypred_svm))
+print(as.factor(test_data$Outcome))
 
-mymatrix <- confusionMatrix(as.factor(mypred), as.factor(data$Outcome[!sample_data]))
-print(mymatrix)
-
+mymatrix_svm <- confusionMatrix(as.factor(mypred_svm), as.factor(test_data$Outcome))
+print(mymatrix_svm)
 
 #sink confusion matrix into txt file - linear kernel function
-#sink(file='/Users/jenniferpark/Desktop/BIOL672/Assignments/Unit_2/Q2_confusion_matrix_linear.txt')
-#print(mymatrix)
+#sink(file='/Users/jenniferpark/Desktop/BIOL672/Assignments/Unit_2/Q2_confusion_matrix_svm_linear.txt')
+#print(mymatrix_svm)
 #sink()
 
 #sink confusion matrix into txt file - polynomial kernel function
-#sink(file='/Users/jenniferpark/Desktop/BIOL672/Assignments/Unit_2/Q2_confusion_matrix_polynomial.txt')
-#print(mymatrix)
-#sink()
+sink(file='/Users/jenniferpark/Desktop/BIOL672/Assignments/Unit_2/Q2_confusion_matrix_svm_polynomial.txt')
+print(mymatrix_svm)
+sink()
 
 #sink confusion matrix into txt file - radial basis kernel function
-sink(file='/Users/jenniferpark/Desktop/BIOL672/Assignments/Unit_2/Q2_confusion_matrix_radial.txt')
-print(mymatrix)
+#sink(file='/Users/jenniferpark/Desktop/BIOL672/Assignments/Unit_2/Q2_confusion_matrix_svm_radial.txt')
+#print(mymatrix_svm)
+#sink()
+
+
+#######################################################################################################
+
+#KSVM
+
+#perform kernel support vector machine (KSVM) using kernlab
+#first do kernal function tuning
+
+#mytest_ksvm <- ksvm(as.matrix(train_data_no_outcome), train_data$Outcome, kernel = 'vanilladot') #linear kernel function
+mytest_ksvm <- ksvm(as.matrix(train_data_no_outcome), train_data$Outcome, kernel = 'polydot') #polynomial kernel function
+#mytest_ksvm <- ksvm(as.matrix(train_data_no_outcome), train_data$Outcome, kernel = 'rbfdot') #radial base kernel function
+
+mypred_ksvm <- predict(mytest_ksvm, test_data_no_outcome, type='response')
+
+#was getting -1 level when printing "mypred" so using ifelse statement to have all values greater than 0, 1, and anything below it 0
+mypred_ksvm <- ifelse(mypred_ksvm > 0, 1, 0)
+
+#print summary of ksvm
+myKSVM <- summary(mypred_ksvm)
+print(myKSVM)
+
+#confusion matrix to evaluate scores of Kernel SVM model
+print(as.factor(mypred_ksvm))
+print(as.factor(data$Outcome[!sample_data]))
+
+mymatrix_ksvm <- confusionMatrix(as.factor(mypred_ksvm), as.factor(data$Outcome[!sample_data]))
+print(mymatrix_ksvm)
+
+
+#sink confusion matrix into txt file - linear kernel function
+#sink(file='/Users/jenniferpark/Desktop/BIOL672/Assignments/Unit_2/Q2_confusion_matrix_ksvm_linear.txt')
+#print(mymatrix_ksvm)
+#sink()
+
+#sink confusion matrix into txt file - polynomial kernel function
+sink(file='/Users/jenniferpark/Desktop/BIOL672/Assignments/Unit_2/Q2_confusion_matrix_ksvm_polynomial.txt')
+print(mymatrix_ksvm)
 sink()
+
+#sink confusion matrix into txt file - radial basis kernel function
+#sink(file='/Users/jenniferpark/Desktop/BIOL672/Assignments/Unit_2/Q2_confusion_matrix_ksvm_radial.txt')
+#print(mymatrix_ksvm)
+#sink()
+
+###################################################################################################################
+
+#PLOTS
 
 #show colored scatterplot to report correct and incorrect assignments
 #some plots based on training data showing outcome as color
-myplot1 <-ggplot(train_data, aes(Pregnancies, Glucose, colour = as.factor(data$Outcome[sample_data]))) + geom_point()
-myplot2 <-ggplot(train_data, aes(Glucose, BMI, colour = as.factor(data$Outcome[sample_data]))) + geom_point()                                 
-myplot3 <-ggplot(train_data, aes(Insulin, Age, colour = as.factor(data$Outcome[sample_data]))) + geom_point()                                 
+myplot1 <-ggplot(train_data, aes(Pregnancies, Glucose, colour = as.factor(train_data$Outcome))) + geom_point()
+myplot2 <-ggplot(train_data, aes(Glucose, BMI, colour = as.factor(train_data$Outcome))) + geom_point()                                 
+myplot3 <-ggplot(train_data, aes(Insulin, Age, colour = as.factor(train_data$Outcome))) + geom_point()                                 
 
 #plots based on test data showing outcome as color
-myplot4 <-ggplot(test_data, aes(Pregnancies, Glucose, colour = as.factor(data$Outcome[!sample_data]))) + geom_point()
-myplot5 <-ggplot(test_data, aes(Glucose, BMI, colour = as.factor(data$Outcome[!sample_data]))) + geom_point()                                 
-myplot6 <-ggplot(test_data, aes(Insulin, Age, colour = as.factor(data$Outcome[!sample_data]))) + geom_point() 
+myplot4 <-ggplot(test_data, aes(Pregnancies, Glucose, colour = as.factor(test_data$Outcome))) + geom_point()
+myplot5 <-ggplot(test_data, aes(Glucose, BMI, colour = as.factor(test_data$Outcome))) + geom_point()                                 
+myplot6 <-ggplot(test_data, aes(Insulin, Age, colour = as.factor(test_data$Outcome))) + geom_point() 
 
-#plots based on test data showing mypred as color
-myplot7 <-ggplot(test_data, aes(Pregnancies, Glucose, colour = as.factor(mypred))) + geom_point()
-myplot8 <-ggplot(test_data, aes(Glucose, BMI, colour = as.factor(mypred))) + geom_point()                                 
-myplot9 <-ggplot(test_data, aes(Insulin, Age, colour = as.factor(mypred))) + geom_point() 
+#plots based on test data showing mypred_svm as color
+myplot8 <-ggplot(test_data, aes(Pregnancies, Glucose, colour = as.factor(mypred_svm))) + geom_point()
+myplot9 <-ggplot(test_data, aes(Glucose, BMI, colour = as.factor(mypred_svm))) + geom_point()                                 
+myplot10 <-ggplot(test_data, aes(Insulin, Age, colour = as.factor(mypred_svm))) + geom_point() 
+
+#plots based on test data showing mypred_ksvm as color
+myplot11 <-ggplot(test_data, aes(Pregnancies, Glucose, colour = as.factor(mypred_ksvm))) + geom_point()
+myplot12 <-ggplot(test_data, aes(Glucose, BMI, colour = as.factor(mypred_ksvm))) + geom_point()                                 
+myplot13 <-ggplot(test_data, aes(Insulin, Age, colour = as.factor(mypred_ksvm))) + geom_point() 
 
 
+#print plots
 #pregnancies vs. glucose
 grid.newpage()
-pushViewport(viewport(layout = grid.layout(3, 1)))
+pushViewport(viewport(layout = grid.layout(4, 1)))
 print(myplot1, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
 print(myplot4, vp = viewport(layout.pos.row = 2, layout.pos.col = 1))
-print(myplot7, vp = viewport(layout.pos.row = 3, layout.pos.col = 1))
-
+print(myplot8, vp = viewport(layout.pos.row = 3, layout.pos.col = 1))
+print(myplot11, vp = viewport(layout.pos.row = 4, layout.pos.col = 1))
 
 #glucose vs. BMI
 grid.newpage()
-pushViewport(viewport(layout = grid.layout(3, 1)))
+pushViewport(viewport(layout = grid.layout(4, 1)))
 print(myplot2, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
 print(myplot5, vp = viewport(layout.pos.row = 2, layout.pos.col = 1))
-print(myplot8, vp = viewport(layout.pos.row = 3, layout.pos.col = 1))
+print(myplot9, vp = viewport(layout.pos.row = 3, layout.pos.col = 1))
+print(myplot12, vp = viewport(layout.pos.row = 4, layout.pos.col = 1))
 
 #age vs. insulin
 grid.newpage()
-pushViewport(viewport(layout = grid.layout(3, 1)))
+pushViewport(viewport(layout = grid.layout(4, 1)))
 print(myplot3, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
 print(myplot6, vp = viewport(layout.pos.row = 2, layout.pos.col = 1))
+print(myplot10, vp = viewport(layout.pos.row = 3, layout.pos.col = 1))
+print(myplot13, vp = viewport(layout.pos.row = 4, layout.pos.col = 1))
+
+#save plots as pdf
+#pdf("Q2_svm_ksvm_linear_scatter_plots.pdf")
+
+#pregnancies vs. glucose
+#grid.newpage()
+#pushViewport(viewport(layout = grid.layout(4, 1)))
+#print(myplot1, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+#print(myplot4, vp = viewport(layout.pos.row = 2, layout.pos.col = 1))
+#print(myplot8, vp = viewport(layout.pos.row = 3, layout.pos.col = 1))
+#print(myplot11, vp = viewport(layout.pos.row = 4, layout.pos.col = 1))
+
+#glucose vs. BMI
+#grid.newpage()
+#pushViewport(viewport(layout = grid.layout(4, 1)))
+#print(myplot2, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+#print(myplot5, vp = viewport(layout.pos.row = 2, layout.pos.col = 1))
+#print(myplot9, vp = viewport(layout.pos.row = 3, layout.pos.col = 1))
+#print(myplot12, vp = viewport(layout.pos.row = 4, layout.pos.col = 1))
+
+#age vs. insulin
+#grid.newpage()
+#pushViewport(viewport(layout = grid.layout(4, 1)))
+#print(myplot3, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+#print(myplot6, vp = viewport(layout.pos.row = 2, layout.pos.col = 1))
+#print(myplot10, vp = viewport(layout.pos.row = 3, layout.pos.col = 1))
+#print(myplot13, vp = viewport(layout.pos.row = 4, layout.pos.col = 1))
+
+#dev.off()
+
+#save plots as pdf
+pdf("Q2_svm_ksvm_polynomial_scatter_plots.pdf")
+
+#pregnancies vs. glucose
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(4, 1)))
+print(myplot1, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(myplot4, vp = viewport(layout.pos.row = 2, layout.pos.col = 1))
+print(myplot8, vp = viewport(layout.pos.row = 3, layout.pos.col = 1))
+print(myplot11, vp = viewport(layout.pos.row = 4, layout.pos.col = 1))
+
+#glucose vs. BMI
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(4, 1)))
+print(myplot2, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(myplot5, vp = viewport(layout.pos.row = 2, layout.pos.col = 1))
 print(myplot9, vp = viewport(layout.pos.row = 3, layout.pos.col = 1))
+print(myplot12, vp = viewport(layout.pos.row = 4, layout.pos.col = 1))
+
+#age vs. insulin
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(4, 1)))
+print(myplot3, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(myplot6, vp = viewport(layout.pos.row = 2, layout.pos.col = 1))
+print(myplot10, vp = viewport(layout.pos.row = 3, layout.pos.col = 1))
+print(myplot13, vp = viewport(layout.pos.row = 4, layout.pos.col = 1))
+
+dev.off()
+
+#save plots as pdf
+#pdf("Q2_svm_ksvm_radial_scatter_plots.pdf")
+
+#pregnancies vs. glucose
+#grid.newpage()
+#pushViewport(viewport(layout = grid.layout(4, 1)))
+#print(myplot1, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+#print(myplot4, vp = viewport(layout.pos.row = 2, layout.pos.col = 1))
+#print(myplot8, vp = viewport(layout.pos.row = 3, layout.pos.col = 1))
+#print(myplot11, vp = viewport(layout.pos.row = 4, layout.pos.col = 1))
+
+#glucose vs. BMI
+#grid.newpage()
+#pushViewport(viewport(layout = grid.layout(4, 1)))
+#print(myplot2, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+#print(myplot5, vp = viewport(layout.pos.row = 2, layout.pos.col = 1))
+#print(myplot9, vp = viewport(layout.pos.row = 3, layout.pos.col = 1))
+#print(myplot12, vp = viewport(layout.pos.row = 4, layout.pos.col = 1))
+
+#age vs. insulin
+#grid.newpage()
+#pushViewport(viewport(layout = grid.layout(4, 1)))
+#print(myplot3, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+#print(myplot6, vp = viewport(layout.pos.row = 2, layout.pos.col = 1))
+#print(myplot10, vp = viewport(layout.pos.row = 3, layout.pos.col = 1))
+#print(myplot13, vp = viewport(layout.pos.row = 4, layout.pos.col = 1))
+
+#dev.off()
+
+
+
+######################################################################################################
 
 #interpretation
 interpretation_file <- "Interpretation_Unit2.md"
@@ -146,66 +288,54 @@ writeLines(c(
   "",
   "QUESTION 2",
   "",
-  "I utilized the same dataset as question 1 (diabetes) and used the kernel support vector
-  machine (KSVM) method and compared the classification accuracy between the 
-  different kernal functions (e.g. linear, polynomial, and radial basis function).",
+  "I utilized the same dataset as question 1 (diabetes) and used the support vector machine (SVM) 
+  method (e.g. e1071) and the kernal SVM (KSVM) method and compared the classification accuracy between the 
+  different kernal functions (e.g. linear, polynomial, and radial basis function) and methods.",
   "",
   "LINEAR KERNEL FUNCTION",
-  "Using the linear function, the classification accuracy came out to be approximately 52.3%, 
-  which is significantly less than the accuracy that was calculated in Q1 using
-  the KNN method (e.g. 67.2%).  Similar to KNN, the plots for the test data 
-  (pregnancies vs. glucose, glucose vs. bmi, and age vs. insulin) show that the outcome 
-  from the dataset and the predicted outcomes in the KSVM using linear function showed some similarities
-  in terms of color but one can clearly see the colors of some samples are not the same between
-  the two graphs, indicating some inaccuracy in the classification.  The difference in colors
-  are slightly more noticeable than when using KNN.",
+  "Using the linear function, the classification accuracy for svm and ksvm came out to be approximately 
+  63% and 52.6%, respectively.  The plots show that when comparing the test data outcome to the
+  predicted outcome using svm and ksvm, one can see that the colors in the svm plot match up better to the
+  test data plat than the ksvm, therefore showing that has a higher classification accuracy.",
   "",
   "CONFUSION MATRIX",
-  "1.Q2_confusion_matrix_linear.txt",
+  "1. Q2_confusion_matrix_svm_linear.txt",
+  "2. Q2_confusion_matrix_ksvm_linear.txt",
   "",
   "PLOTS FOR LINEAR",
-  "1. Q2_Scatter_Plots_BMI_vs._Glucose_Linear.pdf",
-  "2. Q2_Scatter_Plots_Glucose_vs._Pregnancies_Linear.pdf",
-  "3. Q2_Scatter_Plots_Insulin_vs._Age_Linear.pdf",
+  "Q2_svm_ksvm_linear_scatter_plots.pdf",
   "",
   "POLYNOMIAL KERNEL FUNCTION",
-  "Using the polynomial function, the classification accuracy came out to be approximately 46%, 
-  which is significantly less than the accuracy that was calculated in Q1 using
-  the KNN method (e.g. 67.2%) and less than the accuracy using the linear function (e.g. 52.3%).
-  The plots also show some similarities of the colors between the outcome from the dataset
-  and the predicted outcomes (polynomial KSVM) but similar to the linear function, one can see
-  the noticeable difference in colors between the two graphs, indicating several misclassifications.",
+  "Using the polynomial function, the classification accuracy for svm and ksvm came out to be approximately 
+  68.6% and 52.9%, respectively.  Similar to the linear function, the plots show that when comparing the test data outcome to the
+  predicted outcome using svm and ksvm, one can see that the colors in the svm plot match up better to the
+  test data plat than the ksvm, therefore showing that has a higher classification accuracy.",
   "",
   "CONFUSION MATRIX",
-  "1.Q2_confusion_matrix_polynomial.txt",
+  "1. Q2_confusion_matrix_svm_polynomial.txt",
+  "2. Q2_confusion_matrix_ksvm_polynomial.txt",
   "",
   "PLOTS FOR POLYNOMIAL",
-  "1. Q2_Scatter_Plots_BMI_vs._Glucose_Poly.pdf",
-  "2. Q2_Scatter_Plots_Glucose_vs._Pregnancies_Poly.pdf",
-  "3. Q2_Scatter_Plots_Insulin_vs._Age_Poly.pdf",
+  "Q2_svm_ksvm_polynomial_scatter_plots.pdf",
   "",
   "RADIAL BASIS KERNEL FUNCTION",
-  "Using the radial basis function, the classification accuracy came out to be approximately 57.2%, 
-  which is still less than the accuracy that was calculated in Q1 using
-  the KNN method (e.g. 67.2%) but higher than the accuracy using the linear function (e.g. 52.3%)
-  and the polynymoial function (46%).
-  The plots also show some similarities of the colors between the outcome from the dataset
-  and the predicted outcomes (polynomial KSVM) but similar to the linear function and the
-  polynomial function, one can see the noticeable difference in colors between the two graphs, 
-  indicating several misclassifications.",
+  "Using the radial basis function, the classification accuracy for svm and ksvm came out to be approximately 
+  66.4% and 54.5%, respectively.  Similar to the linear and polynomial function, the plots show that when comparing the test data outcome to the
+  predicted outcome using svm and ksvm, one can see that the colors in the svm plot match up better to the
+  test data plat than the ksvm, therefore showing that has a higher classification accuracy.",
   "",
   "CONFUSION MATRIX",
-  "1.Q2_confusion_matrix_radial.txt",
+  "1. Q2_confusion_matrix_svm_radial.txt",
+  "2. Q2_confusion_matrix_ksvm_radial.txt",
   "",
   "PLOTS FOR RADIAL BASIS",
-  "1. Q2_Scatter_Plots_BMI_vs._Glucose_Radial.pdf",
-  "2. Q2_Scatter_Plots_Glucose_vs._Pregnancies_Radial.pdf",
-  "3. Q2_Scatter_Plots_Insulin_vs._Age_Radial.pdf",
+  "Q2_svm_ksvm_radial_scatter_plots.pdf",
   "",
-  "From the results, it seems that out of the three different kernel functions, the radial basis
-  kernel function produced the higest classification accuracy (e.g. 57.2%). However, it is still
-  less than the accuracy seen using the KNN method (e.g. 67.2%), suggesting the simpler
-  method, KNN, was better in terms of classification accuracy."
+  "From the results, it seems that using svm function from the e1071 library had better accuracy
+  than when using the ksvm function from the kernel library.  Even though svm has better accuracy,
+  overall, the svm methods do not provide a better classification accuracy than the simple machine
+  learning methods, like naive Bayes and LDA."
+  
 
 )
 , con = myinterpretation)
